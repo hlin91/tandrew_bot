@@ -2,7 +2,7 @@
 # Tandrew-Bot v1.1
 # The bot will use the last text channel in the server as its
 # default channel for sending birthday notifications
-# Now implements the wolfram-alpha api instead of a chatbot network
+# Now uses Wolfram-API
 #======================================================================
 import discord
 from discord.ext import commands
@@ -32,7 +32,7 @@ changesMade = False
 wedVideos = [] # List of video ID"s for Wednesday videos
 with open("wednesday.txt") as f:
     wedVideos = f.readlines()
-wolfClient = wolframalpha.Client("EYQXT8-XX3L4RLXLY")
+wolfClient = wolframalpha.Client("<WOLFRAM_API_TOKEN>")
 
 async def checkDate(): # Simple background process to continually check the date
     global today
@@ -246,5 +246,5 @@ async def on_message(message): # Override the on_message event to account for We
 
 # Run the bot in parallel with checkDate using asyncio
 loop = asyncio.get_event_loop()
-group = asyncio.gather(bot.start("NjM2MjUwNjMwMzEwMTk5MzE2.Xa85Lw.N4fxu5l_OXkE1tzPVFtF4B7tSgc"), checkDate())
+group = asyncio.gather(bot.start("<BOT_TOKEN_HERE>"), checkDate())
 loop.run_forever()
