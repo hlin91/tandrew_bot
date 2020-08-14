@@ -1,0 +1,6 @@
+discord.py (pip)
+qalc
+wolframalpha (pip)
+// For the music_cog
+ffmpeg
+opus
