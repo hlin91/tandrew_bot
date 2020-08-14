@@ -1,9 +1,10 @@
 #======================================================================
 # Tandrew-Bot v1.1
-# The bot will use the last text channel in the server as its
+# The bot will use the first text channel in the server as its
 # default channel for sending birthday notifications
 # Now uses Wolfram-API
 #======================================================================
+import tokens # Module that contains constants defining the tokens to be used
 import discord
 from discord.ext import commands
 from collections import deque
@@ -25,14 +26,14 @@ class birthday:
 bot = commands.Bot(command_prefix=">")
 bot.add_cog(music_cog.music(bot))
 
-bdays: dict = {} # Store birthdays as list of linked lists
+bdays = {} # Store birthdays as list of linked lists
 today = date.today()
-channel: dict = {} # Default channel for bot messages
+channel = {} # Default channel for bot messages
 changesMade = False
 wedVideos = [] # List of video ID"s for Wednesday videos
 with open("wednesday.txt") as f:
     wedVideos = f.readlines()
-wolfClient = wolframalpha.Client("<WOLFRAM_API_TOKEN>")
+wolfClient = wolframalpha.Client(tokens.WOLFRAM_TOKEN)
 
 async def checkDate(): # Simple background process to continually check the date
     global today
@@ -89,7 +90,7 @@ async def checkDate(): # Simple background process to continually check the date
 async def on_ready():
     global channel
     for g in bot.guilds:
-        channel[g.name] = g.text_channels[-1]
+        channel[g.name] = g.text_channels[0]
     print("We have logged in as {0.user}".format(bot))
     print("Today\'s date: {}/{}".format(today.month, today.day))
     with open("bdays.txt", "r") as bdaysFile:
@@ -245,5 +246,5 @@ async def on_message(message): # Override the on_message event to account for We
 
 # Run the bot in parallel with checkDate using asyncio
 loop = asyncio.get_event_loop()
-group = asyncio.gather(bot.start("<BOT_TOKEN_HERE>"), checkDate())
+group = asyncio.gather(bot.start(tokens.BOT_TOKEN), checkDate())
 loop.run_forever()
