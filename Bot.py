@@ -205,7 +205,6 @@ async def _commands(ctx, cog="default"):
     
 @bot.command(name="hongkong")
 async def _hongkong(ctx):
-    await ctx.send("Fuck Hong Kong.")
     await ctx.send("https://www.scmp.com/comment/opinion/article/3032041/hong-kongs-hatred-mainlanders-feeds-xenophobic-undercurrents-its")
 
 @bot.command(name="qingwen") # Interact with the chatbot neural network
