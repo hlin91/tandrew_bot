@@ -22,17 +22,13 @@ class birthday:
         self.name = n
         self.month = m
         self.day = d
-
+loop = asyncio.get_event_loop()
 bot = commands.Bot(command_prefix=">")
-bot.add_cog(music_cog.music(bot))
-
 bdays = {} # Store birthdays as list of linked lists
 today = date.today()
 channel = {} # Default channel for bot messages
 changesMade = False
 wedVideos = [] # List of video ID"s for Wednesday videos
-with open("wednesday.txt") as f:
-    wedVideos = f.readlines()
 wolfClient = wolframalpha.Client(tokens.WOLFRAM_TOKEN)
 
 async def checkDate(): # Simple background process to continually check the date
@@ -245,7 +241,16 @@ async def on_message(message): # Override the on_message event to account for We
         else:
             await bot.process_commands(message)
 
-# Run the bot in parallel with checkDate using asyncio
-loop = asyncio.get_event_loop()
-group = asyncio.gather(bot.start(tokens.BOT_TOKEN), checkDate())
-loop.run_forever()
+def main():
+    global bot
+    global wedVideos
+    global loop
+    with open("wednesday.txt") as f: # Load videos used for Wednesday bot functionality
+        wedVideos = f.readlines()
+    bot.add_cog(music_cog.music(bot)) # Load music playback features
+    # Run the bot in parallel with checkDate using asyncio
+    group = asyncio.gather(bot.start(tokens.BOT_TOKEN), checkDate())
+    loop.run_forever()
+
+if __name__ == "__main__":
+    main()
