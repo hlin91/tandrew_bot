@@ -90,7 +90,8 @@ async def checkDate(): # Simple background process to continually check the date
 async def on_ready():
     global channel
     for g in bot.guilds:
-        channel[g.name] = g.text_channels[0]
+        if g.text_channels:
+            channel[g.name] = g.text_channels[0]
     print("We have logged in as {0.user}".format(bot))
     print("Today\'s date: {}/{}".format(today.month, today.day))
     with open("bdays.txt", "r") as bdaysFile:
@@ -231,7 +232,7 @@ async def _quickmafs(ctx, *, args): # Pass the arguments to qalc and print the r
     
 @bot.event
 async def on_message(message): # Override the on_message event to account for Wednesday functionality
-    if not message.author.bot: # Don"t reply to other bots including self
+    if not message.author.bot: # Don't reply to other bots including self
         m = message.content.lower()
         if "my dude" in m: # Being addressed
             if "wednesday" in m: # Asking if it is wednesday
