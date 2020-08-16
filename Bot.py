@@ -4,7 +4,7 @@
 # default channel for sending birthday notifications
 # Now uses Wolfram-API
 #======================================================================
-import tokens # Module that contains constants defining the tokens to be used
+import environment # Module that contains several environment dependent constants
 import discord
 from discord.ext import commands
 from collections import deque
@@ -29,7 +29,7 @@ today = date.today()
 channel = {} # Default channel for bot messages
 changesMade = False
 wedVideos = [] # List of video ID"s for Wednesday videos
-wolfClient = wolframalpha.Client(tokens.WOLFRAM_TOKEN)
+wolfClient = wolframalpha.Client(environment.WOLFRAM_TOKEN)
 
 async def checkDate(): # Simple background process to continually check the date
     global today
@@ -46,11 +46,11 @@ async def checkDate(): # Simple background process to continually check the date
         if today.weekday() == 2:
             if bot is not None: 
                 await bot.change_presence(activity=discord.Game("It is Wednesday my dudes!"))
-            with open("wedFrog.jpg", "rb") as icon:
+            with open(environment.WED_FROG, "rb") as icon:
                 if bot is not None: 
                     await bot.user.edit(avatar=icon.read()) # Change profile picture for Wednesdays
         else:
-            with open("mao.png", "rb") as icon:
+            with open(environment.PROFILE_IMG, "rb") as icon:
                 if bot is not None: 
                     await bot.user.edit(avatar=icon.read())
     except:
@@ -70,12 +70,12 @@ async def checkDate(): # Simple background process to continually check the date
                 if today.weekday() == 2:
                     if bot is not None: 
                         await bot.change_presence(activity=discord.Game("It is Wednesday my dudes!"))
-                    with open("wedFrog.jpg", "rb") as icon:
+                    with open(environment.WED_FROG, "rb") as icon:
                         if bot is not None: 
                             await bot.user.edit(avatar=icon.read()) # Change profile picture for Wednesdays
                 else:
                     await bot.change_presence(activity=None)
-                    with open("mao.png", "rb") as icon:
+                    with open(environment.PROFILE_IMG, "rb") as icon:
                         if bot is not None: 
                             await bot.user.edit(avatar=icon.read())
         except:
@@ -249,7 +249,7 @@ def main():
         wedVideos = f.readlines()
     bot.add_cog(music_cog.music(bot)) # Load music playback features
     # Run the bot in parallel with checkDate using asyncio
-    group = asyncio.gather(bot.start(tokens.BOT_TOKEN), checkDate())
+    group = asyncio.gather(bot.start(environment.BOT_TOKEN), checkDate())
     loop.run_forever()
 
 if __name__ == "__main__":
