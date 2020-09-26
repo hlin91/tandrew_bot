@@ -151,7 +151,7 @@ class music(commands.Cog):
         self.last_member = None
         print("Initializing playlist...")
         for index, s in  enumerate(songList):
-            if s.startswith("._"):
+            if s.startswith("."): # Remove mac system files
                 del songList[index]
         shuffle(songList)
         songQueue = deque(songList)

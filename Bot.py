@@ -42,7 +42,7 @@ async def checkDate(): # Simple background process to continually check the date
                 await channel[g.name].send("@everyone It\'s {}\'s birthday today!".format(person.name))
             elif int(person.day) - today.day <= 7 and int(person.day) > today.day:
                 await channel[g.name].send("{}\'s birthday is coming up soon! ({}/{})".format(person.name, person.month, person.day))
-    try:
+    try: # Set profile picture depending on if it is a Wednesday or not
         if today.weekday() == 2:
             if bot is not None: 
                 await bot.change_presence(activity=discord.Game("It is Wednesday my dudes!"))
@@ -78,6 +78,7 @@ async def checkDate(): # Simple background process to continually check the date
                     with open(environment.PROFILE_IMG, "rb") as icon:
                         if bot is not None: 
                             await bot.user.edit(avatar=icon.read())
+                print("Done")
         except:
             print("Tried to change avatar too often.")
         await asyncio.sleep(1800)
