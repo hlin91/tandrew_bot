@@ -6,7 +6,7 @@ My personal discord bot written to learn Python. Performs various miscellaneous 
 </p>
 <p>
   Supply a "environment.py" that declares the following constants<br>
-  <code>
+  <strong>
     WOLFRAM_TOKEN # User token for Wolfram Alpha API<br>
     BOT_TOKEN # Discord bot token<br>
     WED_FROG # File path of picture of Wednesday frog<br>
@@ -15,7 +15,7 @@ My personal discord bot written to learn Python. Performs various miscellaneous 
     CHRISTMAS_1 # File path to Last Christmas audio file version 1<br>
     CHRISTMAS_2 # File path to Last Christmas audio file version 2<br>
     CHRISTMAS_3 # File path to Last Christmas audio file version 3<br>
-  </code>
+  </strong>
 </p>
 <h3>Usage</h3>
 <p>
