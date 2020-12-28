@@ -155,7 +155,7 @@ class music(commands.Cog):
                 del songList[index]
         shuffle(songList)
         songQueue = deque(songList)
-        print("Loading metadata from file...")
+        print("Loading playlist file...")
         with open("playlist.txt", "r") as f:
             for line in f:
                 line = line.strip("\n")

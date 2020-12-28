@@ -10,6 +10,7 @@ from discord.ext import commands
 from collections import deque
 from datetime import date
 from Cogs import music_cog
+from Cogs import rss
 from os import system
 from random import choice
 from time import sleep
@@ -22,6 +23,7 @@ class birthday:
         self.name = n
         self.month = m
         self.day = d
+
 loop = asyncio.get_event_loop()
 bot = commands.Bot(command_prefix=">")
 bdays = {} # Store birthdays as list of linked lists
@@ -35,7 +37,8 @@ async def checkDate(): # Simple background process to continually check the date
     global today
     global bot
     today = date.today()
-    await asyncio.sleep(10) # Wait for the bot to properly intialize
+    while not bot.is_ready():
+        await asyncio.sleep(10) # Wait for the bot to properly intialize
     for g in bot.guilds:
         for person in bdays[g.name][today.month - 1]: # Check everyone who has a birthday this month
             if int(person.day) == today.day:
@@ -83,6 +86,16 @@ async def checkDate(): # Simple background process to continually check the date
             print("Tried to change avatar too often.")
         await asyncio.sleep(1800)
 
+# Background process for RSS functionality
+async def rssDaemon():
+    while not bot.is_ready():
+        await asyncio.sleep(10) # Wait for bot to initialize
+    rss.loadFiles(bot)
+    while True:
+        await rss.getFeed()
+        await rss.postFeed()
+        await asyncio.sleep(600) # Update feed every 10 mins
+
 @bot.event
 async def on_ready():
     global channel
@@ -129,6 +142,7 @@ async def _logout(ctx):
                         outFile.write("{}/{}/{}/{}\n".format(b.name, b.month, b.day, g.name))
         print("Success")
     await music_cog.logoutMusic()
+    await rss.saveChanges()
     await bot.logout()
     loop.stop()
     print("Done")
@@ -249,8 +263,9 @@ def main():
     with open("wednesday.txt") as f: # Load videos used for Wednesday bot functionality
         wedVideos = f.readlines()
     bot.add_cog(music_cog.music(bot)) # Load music playback features
-    # Run the bot in parallel with checkDate using asyncio
-    group = asyncio.gather(bot.start(environment.BOT_TOKEN), checkDate())
+    bot.add_cog(rss.rss(bot)) # Load RSS features
+    # Run the bot in parallel with background processes
+    group = asyncio.gather(bot.start(environment.BOT_TOKEN), checkDate(), rssDaemon())
     loop.run_forever()
 
 if __name__ == "__main__":

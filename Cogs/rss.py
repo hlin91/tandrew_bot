@@ -6,91 +6,141 @@ import discord
 from discord.ext import commands
 import feedparser
 import os
+import dateutil.parser
 
-class rss(commands.Cog):
-    channelChanges = false
-    urlChanges = false
-    urls = [] # List of urls for RSS feeds
-    rssChannel = {} # Channel used for posting RSS updates hashed to the server name
-    channelIndex = {} # Corresponding indexes for the text channels
-    feeds = {} # RSS feed content mapped to each url
-    lastPost = {} # ID of last RSS post mapped to each url
-    
-    def __init__(self, b):
-        global rssChannel
-        global urls
-        global channelIndex
-        # Load RSS feed urls from text file
-        print("Loading RSS feeds...")
-        with open("rssfeeds.txt", "r") as f:
-            for line in f:
-                line.strip("\n")
-                urls.append(line)
-        # Load RSS channels from text file
-        print("Loading RSS channels...")
-        with open("rsschannels.txt", "r") as f:
-            for line in f:
-                line.strip("\n")
-                tokens = line.split("/")
-                if tokens[1].isnumeric():
-                    channelIndex[tokens[0]] = int(tokens[1])
-                    guild = [g for g in b.guilds if tokens[0] == g.name]
-                    if guild and int(tokens[1]) >= 0 and int(tokens[1]) < len(g.text_channels):
-                        rssChannel[guild[0].name] = guild[0].text_channels[int(tokens[1])]
-                    else:
-                        print("Warning: invalid rss channel index for {}\n".format(tokens[0]))
+channelChanges = False
+urlChanges = False
+urls = [] # List of urls for RSS feeds
+rssChannel = {} # Channel used for posting RSS updates hashed to the server name
+channelIndex = {} # Corresponding indexes for the text channels
+feeds = {} # RSS feed content mapped to each url
+lastPost = {} # ID of last RSS post mapped to each url
+
+# Get the latest RSS feed
+async def getFeed():
+    global feeds
+    global lastPost
+    print("Getting RSS feed...")
+    for s in urls:
+        if s in feeds:
+            lastPost[s] = feeds[s]
+        feeds[s] = feedparser.parse(s).entries[0]
+
+# Convert a post into a formatted message string
+def ptos(post):
+    result = ""
+    pic = None
+    try:
+        result += "{}\n".format(post.title)
+    except:
+        pass
+    try:
+        date = dateutil.parser.isoparse(post.date)
+        result += "{}-{}-{}, {}:{}\n".format(date.month, date.day, date.year, format(date.hour, "02"), format(date.minute, "02"))
+    except:
+        pass
+    try:
+        result += "By: {}\n".format(post.creator)
+    except:
+        pass
+    result += "\n---\n"
+    try:
+        result += "{}\n".format(post.summary)
+    except:
+        pass
+    result += "---\n\n"
+    try:
+        result += "{}\n".format(post.link)
+    except:
+        pass
+    try:
+        # Extract the first image from the <a> element
+        tokens = post.content[0]["value"].split(" ")
+        for t in tokens:
+            if t.split("=")[0] == "href":
+                pic = t.split("=")[1]
+                break
+        if pic is not None:
+            pic = pic.split("=")[1].strip('"')
+    except:
+        return result, None
+    return result, pic
+
+# Post the RSS feed to the text channels
+async def postFeed():
+    print("Posting RSS feed...")
+    for url, post in feeds.items():
+        if url not in lastPost or post.id != lastPost[url].id:
+            for g, ch in rssChannel.items():
+                s, pic = ptos(post)
+                if pic is None:
+                    await ch.send(s)
                 else:
-                    print("Warning: ignoring non-numeric rss channel index for {}\n".format(tokens[0]))
+                    try:
+                        e = discord.Embed(url=pic)
+                        e.set_image(url=pic)
+                        await ch.send(content=s, embed=e)
+                    except:
+                        await ch.send(s)
+                
+# Serialize any changes
+async def saveChanges():
+    global channelChanges
+    global urlChanges
+    if channelChanges:
+        print("Saving RSS channels...")
+        with open("rsschannels.txt", "w") as f:
+            for guild, channel in channelIndex.items():
+                f.write("{}/{}\n".format(guild, channel))
+        channelChanges = False
+    if urlChanges:
+        with open("rssfeeds.txt", "w") as f:
+            for s in urls:
+                f.write("{}\n".format(s))
+        urlChanges = False
 
-    # Serialize any changes
-    def saveChanges():
-        global channelChanges
-        global urlChanges
-        if channelChanges:
-            print("Saving RSS channels...")
-            with open("rsschannels.txt", "w") as f:
-                for guild, channel in channelIndex:
-                    f.write("{}/{}\n".format(guild, channel))
-            channelChanges = false
-        if urlChanges:
-            with open("rssfeeds.txt", "w") as f:
-                for s in urls:
-                    f.write(s)
-            urlChanges = false
-            
-    # Get the latest RSS feed
-    def getFeed():
-        global feeds
-        global lastPost
-        for s in urls:
-            if feeds[s] is not None:
-                lastPost[s] = feeds[s][0].id
-            feeds[s] = feedparser.parse(s)[0]
+def loadFiles(b): # Call this once the bot has been fully initialized
+    global rssChannel
+    global urls
+    global channelIndex
+    # Load RSS feed urls from text file
+    print("Loading RSS feeds...")
+    with open("rssfeeds.txt", "r") as f:
+        for line in f:
+            line.strip("\n")
+            urls.append(line)
+    print("Done")
+    # Load RSS channels from text file
+    print("Loading RSS channels...")
+    with open("rsschannels.txt", "r") as f:
+        for line in f:
+            line.strip("\n")
+            tokens = line.split("/")
+            guild = None
+            for g in b.guilds:
+                if tokens[0] == g.name:
+                    guild = g
+                    break
+            if guild is None:
+                print("Warning: no guild of name {}\n".format(tokens[0]))
+            elif guild and int(tokens[1]) >= 0 and int(tokens[1]) < len(guild.text_channels):
+                channelIndex[tokens[0]] = int(tokens[1])
+                rssChannel[guild.name] = guild.text_channels[int(tokens[1])]
+            else:
+                print("Warning: invalid rss channel index for {}\n".format(tokens[0]))
+    print("Done")
 
-    # Convert a post into a formatted message string
-    def ptos(post):
-        result.append("{}\n".format(post.published))
-        result.append("By: {}\n".format(post.author))
-        result.append("\n---\n")
-        result.append("{}\n".format(post.summary))
-        result.append("---\n\n")
-        result.append(post.links)
-        return result
+class rss(commands.Cog):    
+    def __init__(self, b):
+        pass
 
-    # Post the RSS feed to the text channels
-    def postFeed():
-        for url, post in feeds:
-            if post.id != lastPost[url].id:
-                for ch in rssChannel:
-                    ch.send(ptos(post))
-    
     @commands.command()
     # Add a new RSS feed to listen to
     async def addrss(self, ctx, s):
         global urlChanges
-        if s not in feeds:
-            feeds.append(s)
-            urlChanges = true
+        if s not in urls:
+            urls.append(s)
+            urlChanges = True
 
     @commands.command()
     # Set the channel updates are posted to
@@ -101,15 +151,27 @@ class rss(commands.Cog):
         if n.isnumeric() and int(n) >= 0 and int(n) < len(ctx.guild.text_channels):
             channelIndex[ctx.guild.name] = int(n)
             rssChannel[ctx.guild.name] = ctx.guild.text_channels[int(n)]
-            channelChanges = true
+            channelChanges = True
         else:
-            ctx.send("Invalid channel number")
+            await ctx.send("Invalid channel number")
     
     @commands.command()
     # List the current rss feeds
     async def listfeeds(self, ctx):
         result = "```\n"
         for s in urls:
-            result.append("{}\n".format(s))
-        result.append("```")
-        ctx.send(result)
+            result += "{}\n".format(s)
+        result += "```"
+        await ctx.send(result)
+
+    @commands.command()
+    # Save changes
+    async def saverss(self, ctx):
+        await saveChanges()
+
+    @commands.command()
+    # For testing
+    async def testfeed(self, ctx):
+        await getFeed()
+        for key, val in feeds.items():
+            await ctx.send(ptos(val))

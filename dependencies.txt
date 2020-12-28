@@ -1,6 +1,8 @@
 discord.py (pip)
 qalc
 wolframalpha (pip)
+feedparser (pip)
+dateutil(pip)
 // For the music_cog
 ffmpeg
 opus
