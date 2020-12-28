@@ -57,11 +57,10 @@ def ptos(post):
         # Extract the first image from the <a> element
         tokens = post.content[0]["value"].split(" ")
         for t in tokens:
-            if t.split("=")[0] == "href":
-                pic = t.split("=")[1]
+            temp = t.split("=")
+            if temp[0] == "href" or temp[0] == "src":
+                pic = temp[1].strip('"')
                 break
-        if pic is not None:
-            pic = pic.split("=")[1].strip('"')
     except:
         return result, None
     return result, pic
