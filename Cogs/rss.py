@@ -106,14 +106,14 @@ def loadFiles(b): # Call this once the bot has been fully initialized
     global channelIndex
     # Load RSS feed urls from text file
     print("Loading RSS feeds...")
-    with open("rssfeeds.txt", "r") as f:
+    with open("./rssfeeds.txt", "r") as f:
         for line in f:
             line.strip("\n")
             urls.append(line)
     print("Done")
     # Load RSS channels from text file
     print("Loading RSS channels...")
-    with open("rsschannels.txt", "r") as f:
+    with open("./rsschannels.txt", "r") as f:
         for line in f:
             line.strip("\n")
             tokens = line.split("/")

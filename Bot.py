@@ -105,7 +105,7 @@ async def on_ready():
             channel[g.name] = g.text_channels[0]
     print("We have logged in as {0.user}".format(bot))
     print("Today\'s date: {}/{}".format(today.month, today.day))
-    with open("bdays.txt", "r") as bdaysFile:
+    with open("./bdays.txt", "r") as bdaysFile:
         for g in bot.guilds:
             bdays[g.name] = []
             for i in range (0, 12):
@@ -135,7 +135,7 @@ async def _logout(ctx):
     await ctx.send("Arrivederci.")
     if changesMade:
         print("Saving birthdays...")
-        with open("bdays.txt", "w") as outFile:
+        with open("./bdays.txt", "w") as outFile:
             outFile.write("")
             for g in bot.guilds:
                 for queue in bdays[g.name]:
@@ -261,7 +261,7 @@ def main():
     global bot
     global wedVideos
     global loop
-    with open("wednesday.txt") as f: # Load videos used for Wednesday bot functionality
+    with open("./wednesday.txt") as f: # Load videos used for Wednesday bot functionality
         wedVideos = f.readlines()
     bot.add_cog(music_cog.music(bot)) # Load music playback features
     bot.add_cog(rss.rss(bot)) # Load RSS features

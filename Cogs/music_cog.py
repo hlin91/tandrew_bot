@@ -24,7 +24,7 @@ class song: # Simple struct to hold metadata about songs
 vChannelID: dict = {} # The voice channel ID's of each server hashed by guild name
 voice = None # The voice client
 volume: float = 0.5 # Default volume level
-sourcePath = "Cache" # Default source directory
+sourcePath = "./Cache" # Default source directory
 sourceFile = None # Source audio file
 songList = os.listdir(sourcePath) # List of cached songs
 for index, item in songList.items(): # Remove README file from song list
@@ -61,7 +61,7 @@ youtubeOpts ={ # Options for youtube-dl
     "fixup": "detect_or_warn",
     "prefer_ffmpeg": True,
     "progress_hooks": [myHook],
-    "download_archive": "yt_archive.txt"
+    "download_archive": "./yt_archive.txt"
 }
 ydl = YoutubeDL(youtubeOpts) # The youtube_dl downloader class
 
@@ -123,7 +123,7 @@ def repeat(error): # Continuously repeat the current song (currently only intend
 def saveChanges():
     global changesMade
     if changesMade:
-        with open("playlist.txt", "w") as f:
+        with open("./playlist.txt", "w") as f:
             for name in songList:
                 if name in infoDict:
                     i = infoDict[name]
@@ -159,7 +159,7 @@ class music(commands.Cog):
         shuffle(songList)
         songQueue = deque(songList)
         print("Loading playlist file...")
-        with open("playlist.txt", "r") as f:
+        with open("./playlist.txt", "r") as f:
             for line in f:
                 line = line.strip("\n")
                 tokens = line.split("/")
@@ -250,7 +250,7 @@ class music(commands.Cog):
             try:
                 global currentSong
                 global sourceFile
-                sourceFile = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("anthem.mp3"), volume)
+                sourceFile = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("./anthem.mp3"), volume)
                 if voice.is_playing() or voice.is_paused():
                     voice.stop()
                 currentSong = "anthem.mp3"
@@ -271,13 +271,13 @@ class music(commands.Cog):
                 global currentSong
                 global sourceFile
                 if arg.lower() == "chink":
-                    sourceFile = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("christmas3.mp3"), volume)
+                    sourceFile = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("./christmas3.mp3"), volume)
                     currentSong = "christmas3.mp3"
                 elif arg.lower() == "jap":
-                    sourceFile = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("christmas2.mp3"), volume)
+                    sourceFile = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("./christmas2.mp3"), volume)
                     currentSong = "christmas2.mp3"
                 else:
-                    sourceFile = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("christmas.mp3"), volume)
+                    sourceFile = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("./christmas.mp3"), volume)
                     currentSong = "christmas.mp3"
                 await self.bot.change_presence(activity=discord.Game("Last Christmas"))
                 voice.play(sourceFile, after=repeat)
