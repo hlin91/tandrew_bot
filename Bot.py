@@ -266,7 +266,7 @@ def main():
     bot.add_cog(music_cog.music(bot)) # Load music playback features
     bot.add_cog(rss.rss(bot)) # Load RSS features
     # Run the bot in parallel with background processes
-    group = asyncio.gather(bot.start(environ.get("BOT_TOKEN")), checkDate(), rssDaemon())
+    group = asyncio.gather(bot.start(environ.get("BOT_TOKEN")), rssDaemon())
     loop.run_forever()
 
 if __name__ == "__main__":
