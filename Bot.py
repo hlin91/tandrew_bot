@@ -11,6 +11,7 @@ from collections import deque
 from datetime import date
 from Cogs import music_cog
 from Cogs import rss
+from os import environ
 from os import system
 from random import choice
 from time import sleep
@@ -31,7 +32,7 @@ today = date.today()
 channel = {} # Default channel for bot messages
 changesMade = False
 wedVideos = [] # List of video ID"s for Wednesday videos
-wolfClient = wolframalpha.Client(environment.WOLFRAM_TOKEN)
+wolfClient = wolframalpha.Client(environ.get("WOLFRAM_TOKEN"))
 
 async def checkDate(): # Simple background process to continually check the date
     global today
@@ -265,7 +266,7 @@ def main():
     bot.add_cog(music_cog.music(bot)) # Load music playback features
     bot.add_cog(rss.rss(bot)) # Load RSS features
     # Run the bot in parallel with background processes
-    group = asyncio.gather(bot.start(environment.BOT_TOKEN), checkDate(), rssDaemon())
+    group = asyncio.gather(bot.start(environ.get("BOT_TOKEN")), checkDate(), rssDaemon())
     loop.run_forever()
 
 if __name__ == "__main__":
