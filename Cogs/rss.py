@@ -28,19 +28,21 @@ async def getFeed():
 
 # Convert a post into a formatted message string
 def ptos(post):
-    result = ""
+    result = "<a:newspaper:793257230618460160> **Hot off the presses**\n\n"
     pic = None
+    result += "**"
     try:
         result += "{}\n".format(post.title)
     except:
         pass
+    result += "**\n"
     try:
         date = dateutil.parser.isoparse(post.date)
         result += "{}-{}-{}, {}:{}\n".format(date.month, date.day, date.year, format(date.hour, "02"), format(date.minute, "02"))
     except:
         pass
     try:
-        result += "By: {}\n".format(post.creator)
+        result += "By: {}\n".format(post.author)
     except:
         pass
     result += "\n---\n"
@@ -152,11 +154,11 @@ class rss(commands.Cog):
             rssChannel[ctx.guild.name] = ctx.guild.text_channels[int(n)]
             channelChanges = True
         else:
-            await ctx.send("Invalid channel number")
+            await ctx.send("Invalid channel number.")
     
     @commands.command()
     # List the current rss feeds
-    async def listfeeds(self, ctx):
+    async def listrss(self, ctx):
         result = "```\n"
         for s in urls:
             result += "{}\n".format(s)
@@ -174,3 +176,8 @@ class rss(commands.Cog):
         await getFeed()
         for key, val in feeds.items():
             await ctx.send(ptos(val))
+
+    @commands.command()
+    async def saverss(self, ctx):
+        await saveChanges()
+        await ctx.send("Done.")
