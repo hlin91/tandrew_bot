@@ -32,7 +32,7 @@ def ptos(post):
     pic = None
     result += "**"
     try:
-        result += "{}\n".format(post.title)
+        result += "{}".format(post.title)
     except:
         pass
     result += "**\n"
