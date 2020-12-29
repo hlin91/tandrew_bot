@@ -25,11 +25,11 @@ async def getFeed():
         if s in feeds:
             lastPost[s] = feeds[s]
         if feedparser.parse(s).entries:
-            feeds[s] = feedparser.parse(s).entries[0]
+            feeds[s] = feedparser.parse(s).entries
 
 # Convert a post into a formatted message string
 def ptos(post):
-    result = "<a:newspaper:793257230618460160> **Hot off the presses**\n\n"
+    result = "<a:newspaper:793257230618460160> **Hot off the press**\n\n"
     pic = None
     result += "**"
     try:
@@ -71,19 +71,20 @@ def ptos(post):
 # Post the RSS feed to the text channels
 async def postFeed():
     print("Posting RSS feed...")
-    for url, post in feeds.items():
-        if url not in lastPost or post.id != lastPost[url].id:
-            for g, ch in rssChannel.items():
-                s, pic = ptos(post)
-                if pic is None:
-                    await ch.send(s)
-                else:
-                    try:
-                        e = discord.Embed(url=pic)
-                        e.set_image(url=pic)
-                        await ch.send(content=s, embed=e)
-                    except:
+    for url, posts in feeds.items():
+        for post in posts:
+            if url not in lastPost or post not in lastPost[url]:
+                for g, ch in rssChannel.items():
+                    s, pic = ptos(post)
+                    if pic is None:
                         await ch.send(s)
+                    else:
+                        try:
+                            e = discord.Embed(url=pic)
+                            e.set_image(url=pic)
+                            await ch.send(content=s, embed=e)
+                        except:
+                            await ch.send(s)
                 
 # Serialize any changes
 async def saveChanges():
