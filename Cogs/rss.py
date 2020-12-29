@@ -24,7 +24,8 @@ async def getFeed():
     for s in urls:
         if s in feeds:
             lastPost[s] = feeds[s]
-        feeds[s] = feedparser.parse(s).entries[0]
+        if feedparser.parse(s).entries:
+            feeds[s] = feedparser.parse(s).entries[0]
 
 # Convert a post into a formatted message string
 def ptos(post):
@@ -109,7 +110,8 @@ def loadFiles(b): # Call this once the bot has been fully initialized
     with open("./rssfeeds.txt", "r") as f:
         for line in f:
             line.strip("\n")
-            urls.append(line)
+            if line:
+                urls.append(line)
     print("Done")
     # Load RSS channels from text file
     print("Loading RSS channels...")
