@@ -27,7 +27,7 @@ volume: float = 0.5 # Default volume level
 sourcePath = "./Cache" # Default source directory
 sourceFile = None # Source audio file
 songList = os.listdir(sourcePath) # List of cached songs
-for index, item in songList.items(): # Remove README file from song list
+for index, item in enumerate(songList): # Remove README file from song list
     if item == "README.md":
         del songList[index]
 songQueue = None # Queue of songs to play
