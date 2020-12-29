@@ -163,7 +163,8 @@ class music(commands.Cog):
             for line in f:
                 line = line.strip("\n")
                 tokens = line.split("/")
-                infoDict[tokens[0]] = song(tokens[1], float(tokens[2]))
+                if len(tokens) == 2:
+                    infoDict[tokens[0]] = song(tokens[1], float(tokens[2]))
     
     async def playHelp(self): # Helper to start playback of song queue within class member functions
         global voice
