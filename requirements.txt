@@ -1,0 +1,17 @@
+aiohttp==3.6.3
+async-timeout==3.0.1
+attrs==20.3.0
+chardet==3.0.4
+discord==1.0.1
+discord.py==1.5.1
+feedparser==6.0.2
+idna==2.10
+more-itertools==8.6.0
+multidict==4.7.6
+python-dateutil==2.8.1
+sgmllib3k==1.0.0
+six==1.15.0
+wolframalpha==4.1.1
+xmltodict==0.12.0
+yarl==1.5.1
+youtube-dl==2020.12.26
