@@ -75,7 +75,7 @@ async def postFeed():
     print("Posting RSS feed...")
     for url, posts in feeds.items():
         for post in posts:
-            if url not in lastPost or post not in lastPost[url]:
+            if url in lastPost and post not in lastPost[url]:
                 for g, ch in rssChannel.items():
                     s, pic = ptos(post)
                     if pic is None:
