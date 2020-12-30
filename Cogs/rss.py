@@ -62,8 +62,10 @@ def ptos(post):
         for t in tokens:
             temp = t.split("=")
             if temp[0] == "href" or temp[0] == "src":
-                pic = temp[1].strip('"')
-                break
+                link = temp[1].strip('"')
+                if link.endswith(".jpg") or link.endswith(".png"):
+                    pic = link
+                    break
     except:
         return result, None
     return result, pic
