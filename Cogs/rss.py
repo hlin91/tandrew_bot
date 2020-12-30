@@ -22,14 +22,14 @@ async def getFeed():
     global lastPost
     print("Getting RSS feed...")
     for s in urls:
-        if s in feeds:
-            lastPost[s] = feeds[s]
+        if s in feeds: # If this is not the first batch
+            lastPost[s] = feeds[s] # Save it as the last batch
         if feedparser.parse(s).entries:
             feeds[s] = feedparser.parse(s).entries
 
 # Convert a post into a formatted message string
 def ptos(post):
-    result = "<a:newspaper:793257230618460160> **Hot off the press**\n\n"
+    result = "<a:newspaper:793257230618460160> **| Hot off the press**\n\n"
     pic = None
     result += "**"
     try:
@@ -74,19 +74,20 @@ def ptos(post):
 async def postFeed():
     print("Posting RSS feed...")
     for url, posts in feeds.items():
-        for post in posts:
-            if url in lastPost and post not in lastPost[url]:
-                for g, ch in rssChannel.items():
-                    s, pic = ptos(post)
-                    if pic is None:
-                        await ch.send(s)
-                    else:
-                        try:
-                            e = discord.Embed(url=pic)
-                            e.set_image(url=pic)
-                            await ch.send(content=s, embed=e)
-                        except:
+        if url in lastPost: # If this is not the first batch of posts retrieved
+            for post in posts:
+                if post not in lastPost[url]:
+                    for g, ch in rssChannel.items():
+                        s, pic = ptos(post)
+                        if pic is None:
                             await ch.send(s)
+                        else:
+                            try:
+                                e = discord.Embed(url=pic)
+                                e.set_image(url=pic)
+                                await ch.send(content=s, embed=e)
+                            except:
+                                await ch.send(s)
                 
 # Serialize any changes
 async def saveChanges():
@@ -169,11 +170,6 @@ class rss(commands.Cog):
             result += "{}\n".format(s)
         result += "```"
         await ctx.send(result)
-
-    @commands.command()
-    # Save changes
-    async def saverss(self, ctx):
-        await saveChanges()
 
     @commands.command()
     # For testing
