@@ -74,20 +74,19 @@ def ptos(post):
 async def postFeed():
     print("Posting RSS feed...")
     for url, posts in feeds.items():
-        if url in lastPost: # If this is not the first batch of posts retrieved
-            for post in posts:
-                if post not in lastPost[url]:
-                    for g, ch in rssChannel.items():
-                        s, pic = ptos(post)
-                        if pic is None:
+        for post in posts:
+            if url not in lastPost or post not in lastPost[url]:
+                for g, ch in rssChannel.items():
+                    s, pic = ptos(post)
+                    if pic is None:
+                        await ch.send(s)
+                    else:
+                        try:
+                            e = discord.Embed(url=pic)
+                            e.set_image(url=pic)
+                            await ch.send(content=s, embed=e)
+                        except:
                             await ch.send(s)
-                        else:
-                            try:
-                                e = discord.Embed(url=pic)
-                                e.set_image(url=pic)
-                                await ch.send(content=s, embed=e)
-                            except:
-                                await ch.send(s)
                 
 # Serialize any changes
 async def saveChanges():
@@ -135,6 +134,11 @@ def loadFiles(b): # Call this once the bot has been fully initialized
                 rssChannel[guild.name] = guild.text_channels[int(tokens[1])]
             else:
                 print("Warning: invalid rss channel index for {}\n".format(tokens[0]))
+    # Initialize lastPost
+    print("Initializing last posts...")
+    for s in urls:
+        if feedparser.parse(s).entries:
+            lastPost[s] = feedparser.parse(s).entries
     print("Done")
 
 class rss(commands.Cog):    

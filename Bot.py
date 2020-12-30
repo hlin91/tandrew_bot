@@ -82,7 +82,6 @@ async def checkDate(): # Simple background process to continually check the date
                     with open(environment.PROFILE_IMG, "rb") as icon:
                         if bot is not None: 
                             await bot.user.edit(avatar=icon.read())
-                print("Done")
         except:
             print("Tried to change avatar too often.")
         await asyncio.sleep(1800)
