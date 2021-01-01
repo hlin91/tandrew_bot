@@ -156,6 +156,7 @@ async def _tunatest(ctx):
 
 @bot.command(name="toggletuna")
 async def _toggletuna(ctx):
+    global weeklyDrawings
     weeklyDrawings = not weeklyDrawings
     if weeklyDrawings:
         await ctx.send("Weekly drawings are now **Enabled**")
