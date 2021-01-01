@@ -161,7 +161,7 @@ async def _toggletuna(ctx):
     if weeklyDrawings:
         await ctx.send("Weekly drawings are now **Enabled**")
     else:
-        await ctx.send("Weekly drawings are now **Disabled")
+        await ctx.send("Weekly drawings are now **Disabled**")
 
 @bot.command(name="hello")
 async def _hello(ctx):
@@ -255,6 +255,11 @@ async def _commands(ctx, cog="default"):
         result += "shuffle: Shuffles the song list and refills the song queue\n"
         result += "summon: Connects the bot to the default voice channel\n"
         result += "volume [<level>]: Sets the default volume level for the session. Prints the current volume if no arguments are passed\n"
+    elif cog.lower() == "rss": # RSS cog commands
+        result += "addrss <link>: Add a new url to the RSS listener\n"
+        result += "setrsschan <index>: Set the channel RSS feeds are posted to\n"
+        result += "listrss: List the current RSS feed links\n"
+        result += "saverss: Serialize any changes\n"
     else: # Invalid cog name
         result += "Available cogs:\n"
         result += "music\n"
