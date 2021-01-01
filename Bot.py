@@ -34,8 +34,9 @@ changesMade = False
 wedVideos = [] # List of video ID"s for Wednesday videos
 wolfClient = wolframalpha.Client(environ.get("WOLFRAM_TOKEN"))
 tunaFiles = listdir(environment.TUNA)
-drawingPosted = False
+drawingPosted = False # Has a drawing already been posted today
 tunaChannels = {}
+weeklyDrawings = False # Flag to toggle weekly drawing posts
 
 async def checkDate(): # Simple background process to continually check the date
     global today
@@ -64,7 +65,7 @@ async def checkDate(): # Simple background process to continually check the date
         print("Tried to change avatar too often.")
     while True:
         print("Checking the date...")
-        if not drawingPosted and today.weekday() == 3: # Post a drawing on Thursday
+        if weeklyDrawings and not drawingPosted and today.weekday() == 3: # Post a drawing on Thursday
             filename = environment.TUNA + "/" + choice(tunaFiles)
             file = discord.File(filename)
             for g, ch in tunaChannels.items():
@@ -152,6 +153,14 @@ async def _tunatest(ctx):
     filename = environment.TUNA + "/" + choice(tunaFiles)
     file = discord.File(filename)
     await ctx.send( file=file)
+
+@bot.command(name="toggletuna")
+async def _toggletuna(ctx):
+    weeklyDrawings = not weeklyDrawings
+    if weeklyDrawings:
+        await ctx.send("Weekly drawings are now **Enabled**")
+    else:
+        await ctx.send("Weekly drawings are now **Disabled")
 
 @bot.command(name="hello")
 async def _hello(ctx):
