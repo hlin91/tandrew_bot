@@ -157,15 +157,16 @@ class music(commands.Cog):
             if s.startswith("."): # Remove mac system files
                 del songList[index]
         shuffle(songList)
+        print("Done")
         songQueue = deque(songList)
         print("Loading playlist file...")
         with open("./playlist.txt", "r") as f:
             for line in f:
-                line = line.strip("\n")
                 tokens = line.split("/")
                 if len(tokens) == 3:
                     infoDict[tokens[0]] = song(tokens[1], float(tokens[2]))
-    
+        print("Done")
+
     async def playHelp(self): # Helper to start playback of song queue within class member functions
         global voice
         global songQueue

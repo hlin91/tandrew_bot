@@ -1,8 +1,7 @@
 #======================================================================
-# Tandrew-Bot v1.1
+# Tandrew-Bot
 # The bot will use the first text channel in the server as its
 # default channel for sending birthday notifications
-# Now uses Wolfram-API
 #======================================================================
 import environment # Module that contains several environment dependent constants
 import discord
@@ -13,6 +12,7 @@ from Cogs import music_cog
 from Cogs import rss
 from os import environ
 from os import system
+from os import listdir
 from random import choice
 from time import sleep
 from subprocess import check_output
@@ -33,13 +33,16 @@ channel = {} # Default channel for bot messages
 changesMade = False
 wedVideos = [] # List of video ID"s for Wednesday videos
 wolfClient = wolframalpha.Client(environ.get("WOLFRAM_TOKEN"))
+tunaFiles = listdir(environment.TUNA)
+drawingPosted = False
+tunaChannels = {}
 
 async def checkDate(): # Simple background process to continually check the date
     global today
     global bot
     today = date.today()
     while not bot.is_ready():
-        await asyncio.sleep(10) # Wait for the bot to properly intialize
+        await asyncio.sleep(30) # Wait for the bot to properly intialize
     for g in bot.guilds:
         for person in bdays[g.name][today.month - 1]: # Check everyone who has a birthday this month
             if int(person.day) == today.day:
@@ -61,7 +64,17 @@ async def checkDate(): # Simple background process to continually check the date
         print("Tried to change avatar too often.")
     while True:
         print("Checking the date...")
-        try:
+        if not drawingPosted and today.weekday() == 3: # Post a drawing on Thursday
+            filename = environment.TUNA + "/" + choice(tunaFiles)
+            file = discord.File(filename)
+            embed = discord.Embed()
+            embed.set_image(url="attachment://" + filename)
+            for g, ch in tunaChannels.items():
+                await ch.send(embed=embed, file=file)
+            drawingPosted = True
+        elif today.weekday() != 3: # Reset drawingPosted if no longer Thursday
+            drawingPosted = False
+        try: # Check birthdays on date change
             if date.today().weekday() != today.weekday():
                 print("Changing the date...")
                 today = date.today()
@@ -89,8 +102,8 @@ async def checkDate(): # Simple background process to continually check the date
 # Background process for RSS functionality
 async def rssDaemon():
     while not bot.is_ready():
-        await asyncio.sleep(10) # Wait for bot to initialize
-    rss.loadFiles(bot)
+        await asyncio.sleep(30) # Wait for bot to initialize
+    await rss.loadFiles(bot)
     while True:
         await rss.getFeed()
         await rss.postFeed()
@@ -116,7 +129,33 @@ async def on_ready():
             if tokens[3] in bdays:
                 bdays[tokens[3]][int(tokens[1], 10) - 1].append(b)
         print("Birthdays successfully loaded")
+    with open("./tunachannels.txt", "r") as f:
+        for line in f:
+            line.strip("\n")
+            tokens = line.split("/")
+            guild = None
+            for g in bot.guilds:
+                if tokens[0] == g.name:
+                    guild = g
+                    break
+            if guild is None:
+                print("Warning: no guild of name {}\n".format(tokens[0]))
+            elif len(tokens) < 2:
+                print("Warning: no channel given for guild {}\n".format(tokens[0]))
+            elif guild and int(tokens[1]) >= 0 and int(tokens[1]) < len(guild.text_channels):
+                tunaChannels[guild.name] = guild.text_channels[int(tokens[1])]
+            else:
+                print("Warning: invalid rss channel index for {}\n".format(tokens[0]))
+    print("Tuna channels loaded")
     print("Ready")
+
+@bot.command(name="tunatest") # For debugging
+async def _tunatest(ctx):
+    filename = environment.TUNA + "/" + choice(tunaFiles)
+    file = discord.File(filename)
+    embed = discord.Embed()
+    embed.set_image(url="attachment://" + filename)
+    await ctx.send(embed=embed, file=file)
 
 @bot.command(name="hello")
 async def _hello(ctx):
@@ -229,7 +268,7 @@ async def _qingwen(ctx, *, args):
             for pod in result.pods:
                 try:
                     await ctx.send(pod.text)
-                    await ctx.send("=============================================================================")
+                    await ctx.send("---")
                 except:
                     pass
 
@@ -260,8 +299,10 @@ def main():
     global bot
     global wedVideos
     global loop
+    print("Loading Wednesday links...")
     with open("./wednesday.txt") as f: # Load videos used for Wednesday bot functionality
         wedVideos = f.readlines()
+    print("Done")
     bot.add_cog(music_cog.music(bot)) # Load music playback features
     bot.add_cog(rss.rss(bot)) # Load RSS features
     # Run the bot in parallel with background processes

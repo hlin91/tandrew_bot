@@ -104,7 +104,7 @@ async def saveChanges():
                 f.write("{}\n".format(s))
         urlChanges = False
 
-def loadFiles(b): # Call this once the bot has been fully initialized
+async def loadFiles(b): # Call this once the bot has been fully initialized
     global rssChannel
     global urls
     global channelIndex
@@ -129,6 +129,8 @@ def loadFiles(b): # Call this once the bot has been fully initialized
                     break
             if guild is None:
                 print("Warning: no guild of name {}\n".format(tokens[0]))
+            elif len(tokens) < 2:
+                print("Warning: no channel given for guild {}\n".format(tokens[0]))
             elif guild and int(tokens[1]) >= 0 and int(tokens[1]) < len(guild.text_channels):
                 channelIndex[tokens[0]] = int(tokens[1])
                 rssChannel[guild.name] = guild.text_channels[int(tokens[1])]
@@ -143,7 +145,7 @@ def loadFiles(b): # Call this once the bot has been fully initialized
 
 class rss(commands.Cog):    
     def __init__(self, b):
-        pass
+        return
 
     @commands.command()
     # Add a new RSS feed to listen to
