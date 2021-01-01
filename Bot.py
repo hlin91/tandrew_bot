@@ -262,7 +262,9 @@ async def _commands(ctx, cog="default"):
         result += "saverss: Serialize any changes\n"
     else: # Invalid cog name
         result += "Available cogs:\n"
+        result += "default\n"
         result += "music\n"
+        result += "rss\n"
     result += "```"
     await ctx.send(result)
     
