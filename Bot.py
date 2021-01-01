@@ -67,10 +67,8 @@ async def checkDate(): # Simple background process to continually check the date
         if not drawingPosted and today.weekday() == 3: # Post a drawing on Thursday
             filename = environment.TUNA + "/" + choice(tunaFiles)
             file = discord.File(filename)
-            embed = discord.Embed()
-            embed.set_image(url="attachment://" + filename)
             for g, ch in tunaChannels.items():
-                await ch.send(embed=embed, file=file)
+                await ch.send(file=file)
             drawingPosted = True
         elif today.weekday() != 3: # Reset drawingPosted if no longer Thursday
             drawingPosted = False
@@ -153,9 +151,7 @@ async def on_ready():
 async def _tunatest(ctx):
     filename = environment.TUNA + "/" + choice(tunaFiles)
     file = discord.File(filename)
-    embed = discord.Embed()
-    embed.set_image(url="attachment://" + filename)
-    await ctx.send(embed=embed, file=file)
+    await ctx.send( file=file)
 
 @bot.command(name="hello")
 async def _hello(ctx):
