@@ -173,7 +173,8 @@ class rss(commands.Cog):
     async def listrss(self, ctx):
         result = "```\n"
         for s in urls:
-            result += "{}\n".format(s)
+            if s != "":
+                result += "{}\n".format(s)
         result += "```"
         await ctx.send(result)
 

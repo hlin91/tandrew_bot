@@ -229,7 +229,7 @@ async def _listbdays(ctx):
     await ctx.send(result)
 
 @bot.command(name="commands")
-async def _commands(ctx, cog="default"):
+async def _commands(ctx, cog=""):
     result = "```\n"
     if cog.lower() == "default": # Default birthday bot commands
         result += "echo <string>: Prints the string into chat\n"
@@ -238,7 +238,7 @@ async def _commands(ctx, cog="default"):
         result += "removebday <name> <month> <day>: Removes the specified birthday from the list\n"
         result += "initbdays: Resets the birthday list for this server\n"
         result += "listbdays: Prints all birthdays into chat\n"
-        result += "qingwen <string>: Ask Tandrew-Bot questions\n"
+        result += "qingwen <string>: Send Wolfram query\n"
     elif cog.lower() == "music": # Music cog commands
         result += "leave: Disconnects the bot from the voice channel\n"
         result += "listqueue: Prints the remaining song queue\n"
