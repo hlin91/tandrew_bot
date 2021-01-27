@@ -14,16 +14,16 @@ from youtube_dl import YoutubeDL
 
 class song: # Simple struct to hold metadata about songs
     name = None
-    vol: float = None
+    vol = None
     def __init__(self, n, v: int = 0.5):
         self.name = n
         self.vol = v
 #======================================================================
 # Global Data
 #======================================================================
-vChannelID: dict = {} # The voice channel ID's of each server hashed by guild name
+vChannelID = {} # The voice channel ID's of each server hashed by guild name
 voice = None # The voice client
-volume: float = 0.5 # Default volume level
+volume = 0.5 # Default volume level
 sourcePath = "./Cache" # Default source directory
 sourceFile = None # Source audio file
 songList = os.listdir(sourcePath) # List of cached songs
@@ -33,10 +33,10 @@ for index, item in enumerate(songList): # Remove README file from song list
 songQueue = None # Queue of songs to play
 currentSong = None # Current song playing
 nextSong = None # Song explicitly queued up to play next by user
-infoDict: dict = {} # Dictionary of song metadata hashed to the filename
-changesMade: bool = False # Are there changes that need to be serialized
+infoDict = {} # Dictionary of song metadata hashed to the filename
+changesMade = False # Are there changes that need to be serialized
 
-downloaded: bool = False # Did youtube-dl successfully download a file
+downloaded = False # Did youtube-dl successfully download a file
 def myHook(d): # Progress hook for youtube-dl
     global infoDict
     global changesMade
@@ -68,7 +68,7 @@ ydl = YoutubeDL(youtubeOpts) # The youtube_dl downloader class
 #======================================================================
 # Helper Functions
 #======================================================================
-def fetch(query: str): # Helper function to download from youtube
+def fetch(query): # Helper function to download from youtube
     global ydl
     global downloaded
     ydl.download([query])
