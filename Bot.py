@@ -48,19 +48,19 @@ async def checkDate(): # Simple background process to continually check the date
         for person in bdays[g.name][today.month - 1]: # Check everyone who has a birthday this month
             if int(person.day) == today.day:
                 await channel[g.name].send("@everyone It\'s {}\'s birthday today!".format(person.name))
-            elif int(person.day) - today.day <= 7 and int(person.day) > today.day:
+            elif int(person.day) - today.day <= 1 and int(person.day) > today.day:
                 await channel[g.name].send("{}\'s birthday is coming up soon! ({}/{})".format(person.name, person.month, person.day))
-    try: # Set profile picture depending on if it is a Wednesday or not
+    try: # Set status depending on if it is a Wednesday or not
         if today.weekday() == 2:
             if bot is not None: 
                 await bot.change_presence(activity=discord.Game("It is Wednesday my dudes!"))
-            with open(environment.WED_FROG, "rb") as icon:
-                if bot is not None: 
-                    await bot.user.edit(avatar=icon.read()) # Change profile picture for Wednesdays
-        else:
-            with open(environment.PROFILE_IMG, "rb") as icon:
-                if bot is not None: 
-                    await bot.user.edit(avatar=icon.read())
+            # with open(environment.WED_FROG, "rb") as icon:
+        #         if bot is not None: 
+        #             await bot.user.edit(avatar=icon.read()) # Change profile picture for Wednesdays
+        # else:
+        #     with open(environment.PROFILE_IMG, "rb") as icon:
+        #         if bot is not None: 
+        #             await bot.user.edit(avatar=icon.read())
     except:
         print("Tried to change avatar too often.")
     while True:
@@ -81,19 +81,19 @@ async def checkDate(): # Simple background process to continually check the date
                     for person in bdays[g.name][today.month - 1]: # Check everyone who has a birthday this month
                         if int(person.day) == today.day:
                             await channel[g.name].send("@everyone It\'s {}\'s birthday today!".format(person.name))
-                        elif int(person.day) - today.day <= 7 and int(person.day) > today.day:
+                        elif int(person.day) - today.day <= 1 and int(person.day) > today.day:
                             await channel[g.name].send("{}\'s birthday is coming up soon! ({}/{})".format(person.name, person.month, person.day))
                 if today.weekday() == 2:
                     if bot is not None: 
                         await bot.change_presence(activity=discord.Game("It is Wednesday my dudes!"))
-                    with open(environment.WED_FROG, "rb") as icon:
-                        if bot is not None: 
-                            await bot.user.edit(avatar=icon.read()) # Change profile picture for Wednesdays
+                    # with open(environment.WED_FROG, "rb") as icon:
+                    #     if bot is not None: 
+                    #         await bot.user.edit(avatar=icon.read()) # Change profile picture for Wednesdays
                 else:
                     await bot.change_presence(activity=None)
-                    with open(environment.PROFILE_IMG, "rb") as icon:
-                        if bot is not None: 
-                            await bot.user.edit(avatar=icon.read())
+                    # with open(environment.PROFILE_IMG, "rb") as icon:
+                    #     if bot is not None: 
+                    #         await bot.user.edit(avatar=icon.read())
         except:
             print("Tried to change avatar too often.")
         await asyncio.sleep(1800)
@@ -265,12 +265,13 @@ async def _commands(ctx, cog=""):
         result += "default\n"
         result += "music\n"
         result += "rss\n"
+        result += "\nUse >commands <cog_name> to view the commands associated with the cog\n"
     result += "```"
     await ctx.send(result)
     
 @bot.command(name="hongkong")
 async def _hongkong(ctx):
-    await ctx.send("https://www.scmp.com/comment/opinion/article/3032041/hong-kongs-hatred-mainlanders-feeds-xenophobic-undercurrents-its")
+    await ctx.send("Fuck Hong Kong\nhttps://www.scmp.com/comment/opinion/article/3032041/hong-kongs-hatred-mainlanders-feeds-xenophobic-undercurrents-its")
 
 @bot.command(name="qingwen") # Interact with the chatbot neural network
 async def _qingwen(ctx, *, args):
