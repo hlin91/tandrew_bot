@@ -75,8 +75,6 @@ def fetch(query): # Helper function to download from youtube
     if downloaded:
         os.rename("{}".format(nextSong), "{}/{}".format(sourcePath, nextSong)) # Move to Cache folder
         songList.append(nextSong)
-    else:
-        nextSong = none
     downloaded = False
 
 def clearStatus(error): # Clear bot status and current song
@@ -401,15 +399,10 @@ class music(commands.Cog):
         else:
             q = "".join(args)
             if q in songList: # Query is exactly the name of a local file
-                await ctx.send("Successfully enqueued `{}`.".format(q))
                 songQueue.appendleft(q)
             else: # Fetch and enqueue query from youtube
                 fetch(q)
-                if (nextSong is not none):
-                    await ctx.send("Successfully enqueued {}.".format(infoDict[nextSong].name))
-                    songQueue.appendleft(nextSong)
-                else:
-                    await ctx.send("No results found for `{}`.".format(q))
+                songQueue.appendleft(nextSong)
             if not (voice.is_playing() or voice.is_paused()):
                 await self.playHelp()
                 
