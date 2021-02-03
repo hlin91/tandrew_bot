@@ -396,7 +396,6 @@ class music(commands.Cog):
     async def play(self, ctx, *, args):
         global songQueue
         global voice
-        global nextSong
         if not args:
             await ctx.send("Usage: play <song>")
         else:
