@@ -407,7 +407,7 @@ class music(commands.Cog):
                 fetch(q)
                 songQueue.appendleft(nextSong)
             if nextSong is not None:
-                await ctx.send("Added `{}` to queue.".format(infoDict[nextSong].name))
+                await ctx.send("`{}` added to queue.".format(infoDict[nextSong].name))
             if not (voice.is_playing() or voice.is_paused()):
                 await self.playHelp()
                 
