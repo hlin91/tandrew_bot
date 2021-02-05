@@ -47,8 +47,9 @@ def myHook(d): # Progress hook for youtube-dl
             changesMade = True
             downloaded = True
             name = d["filename"][:-17]
-            infoDict[d["filename"]] = song(name, volume)
             nextSong = d["filename"]
+            infoDict[nextSong] = song(name, volume)
+            
             
 youtubeOpts ={ # Options for youtube-dl
     "default_search": "ytsearch1",
@@ -394,15 +395,19 @@ class music(commands.Cog):
     async def play(self, ctx, *, args):
         global songQueue
         global voice
+        global nextSong
         if not args:
             await ctx.send("Usage: play <song>")
         else:
             q = "".join(args)
             if q in songList: # Query is exactly the name of a local file
+                nextSong = q
                 songQueue.appendleft(q)
             else: # Fetch and enqueue query from youtube
                 fetch(q)
                 songQueue.appendleft(nextSong)
+            if nextSong is not None:
+                await ctx.send("Added `{}` to queue.".format(infoDict[nextSong].name))
             if not (voice.is_playing() or voice.is_paused()):
                 await self.playHelp()
                 
