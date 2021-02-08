@@ -43,12 +43,12 @@ def myHook(d): # Progress hook for youtube-dl
     global nextSong
     global downloaded
     if d["status"] == "finished":
+        nextSong = d["filename"]
         if d["filename"] not in infoDict:
             changesMade = True
             downloaded = True
             name = d["filename"][:-17]
             infoDict[nextSong] = song(name, volume)
-         nextSong = d["filename"]
             
 youtubeOpts ={ # Options for youtube-dl
     "default_search": "ytsearch1",
