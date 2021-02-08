@@ -47,9 +47,8 @@ def myHook(d): # Progress hook for youtube-dl
             changesMade = True
             downloaded = True
             name = d["filename"][:-17]
-            nextSong = d["filename"]
             infoDict[nextSong] = song(name, volume)
-            
+         nextSong = d["filename"]
             
 youtubeOpts ={ # Options for youtube-dl
     "default_search": "ytsearch1",
