@@ -42,8 +42,8 @@ def myHook(d): # Progress hook for youtube-dl
     global changesMade
     global nextSong
     global downloaded
-    nextSong = d["filename"]
     if d["status"] == "finished":
+        nextSong = d["filename"]
         if d["filename"] not in infoDict:
             changesMade = True
             downloaded = True
@@ -61,7 +61,7 @@ youtubeOpts ={ # Options for youtube-dl
     "fixup": "detect_or_warn",
     "prefer_ffmpeg": True,
     "progress_hooks": [myHook],
-    "download_archive": "./yt_archive.txt"
+#    "download_archive": "./yt_archive.txt"
 }
 ydl = YoutubeDL(youtubeOpts) # The youtube_dl downloader class
 
