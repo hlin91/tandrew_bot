@@ -42,8 +42,8 @@ def myHook(d): # Progress hook for youtube-dl
     global changesMade
     global nextSong
     global downloaded
+    nextSong = d["filename"]
     if d["status"] == "finished":
-        nextSong = d["filename"]
         if d["filename"] not in infoDict:
             changesMade = True
             downloaded = True
